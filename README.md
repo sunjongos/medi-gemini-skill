@@ -1,12 +1,36 @@
-# 🏛️ Medi-Gemini Skill (`medi-gemini-skill` v6.0)
-> **Full-Spectrum Neurosymbolic Medical AI Agent Skill: `JEV Router × Clinical Deep Twin × 0-Dependency Ontology`**  
-> *Optimizing All 7 Google DeepMind Med-Gemini Capabilities (UGS · Long-Context EHR & FHIR · 2D/3D Medical Vision · CPIC Pharmacogenomics · AMIE VOI Dialogue · 99.0/100 Closed-Loop Harness)*
+# 🏛️ Medi-Gemini Skill (`medi-gemini-skill` v7.0)
+> **1인 대학병원 다학제 진료 표준 — Full-Spectrum Neurosymbolic Medical AI Skill (`JEV Router × Clinical Deep Twin × 0-Dependency Ontology`)**  
+> *Google DeepMind Med-Gemini 7대 의료 역량 × 2025~2026 다학제 최신 가이드라인 Delta × 진료실 1-클릭 로컬 웹 앱 & 바탕화면 아이콘 × `/medi-gemini` 상시 워크플로우*
+
+<p align="left">
+  <img src="./assets/medi_gemini_icon.png" alt="Medi-Gemini v7.0 Desktop Icon" width="88" />
+</p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](https://www.python.org/)
 [![Architecture: JEV%20%C3%97%20DeepTwin%20%C3%97%20Ontology](https://img.shields.io/badge/Neurosymbolic-JEV%20%C3%97%20DeepTwin%20%C3%97%20Ontology-purple.svg)](./SKILL.md)
 [![Benchmark: 14%2F14%20(100%25)](https://img.shields.io/badge/Clinical%20Trap%20Benchmark-14%2F14%20(100%25)-10b981.svg)](./scripts/benchmark_assist_loop.py)
-[![Med--Gemini: 7%20Capabilities](https://img.shields.io/badge/Google%20Med--Gemini-All%207%20Capabilities-06b6d4.svg)](./scripts/medi_gemini_neurosymbolic_orchestrator.py)
+[![Clinic%20Web%20App: 1--Click%20Local](https://img.shields.io/badge/Clinic%20Web%20App-1--Click%20Zero--PHI-06b6d4.svg)](./app/medi_gemini_local_app.py)
+
+---
+
+## 🏥 1인 대학병원 다학제 협진 보드 (v7.0 New!)
+
+전문의 한 명이 자신의 주전공(척추·통증)을 깊게 파면서, 빠르게 발전하는 **타과 최신 표준(당뇨·내분비, 골다공증, 무릎·발목 관절, 신장·순환기)** 까지 진료실에서 3초 만에 교차 검증할 수 있도록 **"예전 관행 vs 2025~2026 최신 표준 Delta"** 패널과 **1-클릭 로컬 웹 앱**을 탑재했습니다.
+
+- **내분비내과 (당뇨·비만)**: `SGLT2i`(자디앙·포시가) 수술 3~4일 전 중단(정상혈당 DKA 예방), `GLP-1/GIP`(마운자로·위고비) 수술 전 흡인 위험 관리 & 대퇴사두근 근감소 방어
+- **내분비 × 척추 (골다공증)**: `Denosumab`(프롤리아) 임의 중단 다발성 척추압박골절 반동(Rebound) 경고, 중증 골다공증 척추수술 전 골형성촉진제(`Anabolic-First`) 선행
+- **정형외과 (무릎·발목·족부)**: 중장년 내측 반월상연골 후각 기시부 파열(`MMPRT`) 조기 봉합, 당뇨병 환자의 급성 발적·부종 발에서 봉와직염으로 오진하기 쉬운 **급성 샤르코 관절(`Charcot Foot`)** 즉각 감별
+- **신장·순환기내과 (`KDIGO`)**: `ACEi/ARB + 이뇨제 + NSAID` 급성신손상(`Triple Whammy`) 자동 차단
+- **🧬 1-클릭 자가학습(Self-Evolve)**: 학회·최신 논문 지침을 웹 UI에서 입력하면 즉시 SQLite DB + `wiki/MOC_Medi_Gemini_Ontology.md` 에 영구 학습
+
+### 💻 비개발자 원장님용 1-클릭 설치 & 실행 (터미널 명령어 0줄)
+```bash
+git clone https://github.com/sunjongos/medi-gemini-skill.git
+cd medi-gemini-skill
+python install_skill.py
+```
+> 위 명령어 한 줄로 **① 스킬 + ② `/medi-gemini` 슬래시 워크플로우 + ③ 로컬 다학제 웹 앱 + ④ 바탕화면 커스텀 바로가기 아이콘(`Medi-Gemini 다학제협진`)** 이 한 번에 자동 설치됩니다! 바탕화면 아이콘을 더블클릭하면 외부 전송 없는 **Zero-PHI 로컬 웹 앱(`http://127.0.0.1:8765`)** 이 즉시 열립니다.
 
 ---
 
