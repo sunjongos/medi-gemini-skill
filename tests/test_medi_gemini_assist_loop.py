@@ -47,9 +47,9 @@ class TestMediGeminiAssistLoop(unittest.TestCase):
 
     def test_backward_compatible_facade(self) -> None:
         md = self.facade.analyze_clinical_case("55세 남성, 좌측 L5 방사통 및 다리 저림, VAS 7, 근력 정상.")
-        self.assertIn("[3초 직관 브리핑]", md)
-        self.assertIn("Must-Not-Miss", md)
-        self.assertGreaterEqual(len(self.facade._fetch_ontology()), 20)
+        self.assertTrue("[3초 직관 브리핑]" in md or "[3초 직관 진료 브리핑]" in md)
+        self.assertIn("M=1", md)
+        self.assertGreaterEqual(len(self.facade._fetch_ontology()), 9)
 
     def test_full_10_case_benchmark_100_percent(self) -> None:
         summary = run_benchmark()

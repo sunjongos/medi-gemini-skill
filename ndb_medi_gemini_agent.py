@@ -28,13 +28,9 @@ import sqlite3
 import sys
 from typing import Any, Dict, List, Optional
 
-if sys.platform == "win32" and not hasattr(sys.stdout, "_utf8_wrapped"):
-    try:
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-        sys.stdout._utf8_wrapped = True
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
-    except Exception:
-        pass
+if sys.platform == "win32" and hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 BASE_DIR = pathlib.Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "medi_gemini_knowledge.db"
@@ -977,6 +973,15 @@ class NDBMediGeminiWorldBestEngine:
         res = self.run_clinical_assist(case_text=case_text, mode="all")
         return self.format_markdown_report(res, mode="all")
 
+    def _fetch_ontology(self) -> List[Dict[str, str]]:
+        rows = self._query_table(
+            "SELECT domain, subject, predicate, object, clinical_relevance FROM medi_gemini_ontology;"
+        )
+        return [
+            {"domain": r[0], "subject": r[1], "predicate": r[2], "object": r[3], "relevance": r[4]}
+            for r in rows
+        ]
+
 
 # Backwards-compatible aliases
 NDBMediGeminiAssistEngine = NDBMediGeminiWorldBestEngine
@@ -984,9 +989,10 @@ NDBMediGeminiEngine = NDBMediGeminiWorldBestEngine
 
 
 def main():
-    parser = argparse.ArgumentParser(description="NDB Medi-Gemini Clinical Assist AI Engine v4.0 World-Best")
+    parser = argparse.ArgumentParser(description="NDB Medi-Gemini Clinical Assist AI Engine v5.0 World-Best")
     parser.add_argument("--case", type=str, default="58세 남성, 좌측 L5 신경근 피부분절 타는 듯한 방사통 및 100m 파행, 새벽 3시 통증 악화, 겨울 감기 기침과 변비로 허리 통증 심화. 아스피린 복용 중.", help="Patient clinical case description")
-    parser.add_argument("--mode", type=str, default="all", choices=["all", "soap", "triage", "ddx", "matrix", "plan", "safety", "explain", "hira"], help="Clinical assist output mode")
+    parser.add_argument("--mode", type=str, default="all", choices=["all", "loop", "soap", "triage", "ddx", "matrix", "plan", "safety", "explain", "hira"], help="Clinical assist output mode")
+    parser.add_argument("--benchmark", action="store_true", help="Run 14-case multi-specialty clinical trap benchmark")
     parser.add_argument("--smc", type=float, default=4.5, help="SMC Motor Grade (0~5)")
     parser.add_argument("--vas", type=float, default=7.5, help="Current VAS Pain (0~10)")
     parser.add_argument("--prev-vas", type=float, default=8.0, help="Previous Visit VAS Pain (0~10)")
@@ -1004,6 +1010,22 @@ def main():
     parser.add_argument("--stage", type=str, default="initial", help="Visit stage (initial, week2, week4, postop)")
     parser.add_argument("--json", action="store_true", help="Output structured JSON")
     args = parser.parse_args()
+
+    if args.benchmark:
+        sys.path.insert(0, str(BASE_DIR / "scripts"))
+        from benchmark_assist_loop import run_benchmark
+        print(json.dumps(run_benchmark(), ensure_ascii=False, indent=2))
+        return
+
+    if args.mode == "loop":
+        sys.path.insert(0, str(BASE_DIR / "scripts"))
+        from medi_gemini_assist_loop import MediGeminiAssistLoop
+        loop_out = MediGeminiAssistLoop(db_path=DB_PATH).run_assist_loop(args.case)
+        if args.json:
+            print(json.dumps({k: v for k, v in loop_out.items() if k != "markdown_report"}, ensure_ascii=False, indent=2))
+        else:
+            print(loop_out["markdown_report"])
+        return
 
     engine = NDBMediGeminiWorldBestEngine()
     res = engine.run_clinical_assist(
