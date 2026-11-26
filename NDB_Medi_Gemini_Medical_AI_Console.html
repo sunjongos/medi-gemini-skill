@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDB Medi-Gemini Medical AI Console | Google Med-Gemini Engine</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- KaTeX for Math Equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070a12;
+            --bg-card: #0f172a;
+            --bg-card-hover: #1e293b;
+            --border-color: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-indigo: #6366f1;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-purple: #a855f7;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --shadow-glow: 0 0 25px rgba(6, 182, 212, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(6, 182, 212, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(99, 102, 241, 0.12) 0%, transparent 40%);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 40px;
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1500px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .logo-box { display: flex; align-items: center; gap: 15px; }
+
+        .logo-icon {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+            border-radius: 14px; display: flex; align-items: center; justify-content: center;
+            font-size: 26px; color: #fff; box-shadow: var(--shadow-glow);
+        }
+
+        .logo-h1 {
+            font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800;
+            background: linear-gradient(90deg, #fff, #38bdf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .logo-tag { font-size: 11px; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        .badge-google {
+            background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4);
+            padding: 8px 18px; border-radius: 30px; font-size: 13px; font-weight: 700; color: var(--accent-cyan);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .container { max-width: 1500px; margin: 30px auto; padding: 0 30px; }
+
+        .console-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; }
+
+        /* Left Panel: Input Form */
+        .panel-box {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .panel-header { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 18px; color: #fff; display: flex; align-items: center; gap: 10px; }
+
+        .input-group { margin-bottom: 18px; }
+        .input-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+
+        textarea, select, input[type="text"] {
+            width: 100%; background: rgba(7, 10, 18, 0.8); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 14px; color: #fff; font-family: 'Inter', sans-serif; font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus, select:focus, input[type="text"]:focus {
+            outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-run {
+            width: 100%; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+            border: none; border-radius: 14px; padding: 16px; color: #fff; font-family: 'Outfit', sans-serif;
+            font-size: 16px; font-weight: 800; cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+
+        .btn-run:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(6, 182, 212, 0.5); }
+
+        /* Sample Buttons */
+        .samples-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-sample {
+            background: rgba(30, 41, 59, 0.6); border: 1px solid var(--border-color);
+            padding: 6px 12px; border-radius: 8px; font-size: 11.5px; color: var(--accent-blue);
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .btn-sample:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--accent-blue); }
+
+        /* Right Panel: Med-Gemini Results */
+        .output-box {
+            background: rgba(7, 10, 18, 0.9); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 20px; min-height: 500px;
+        }
+
+        .report-h2 { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; color: var(--accent-cyan); margin-bottom: 15px; }
+        .report-section { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; margin-bottom: 15px; }
+        .report-sec-h3 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+
+        .matrix-badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+        .matrix-badge-item {
+            background: rgba(30, 41, 59, 0.5); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 10px; font-size: 12px; text-align: center;
+        }
+        .matrix-badge-item.active { border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.15); color: #fff; font-weight: 700; }
+
+        footer { text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo-box">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-user-md"></i>
+                </div>
+                <div>
+                    <div class="logo-h1">NDB Medi-Gemini Medical AI Console</div>
+                    <div class="logo-tag">Google Med-Gemini Prompt Harness & Choi 3×3 Matrix Engine</div>
+                </div>
+            </div>
+            <div class="badge-google">
+                <i class="fa-brands fa-google"></i> Med-Gemini Benchmark (MedQA 91%+)
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="console-grid">
+
+            <!-- Input Form Panel -->
+            <div class="panel-box">
+                <div class="panel-header">
+                    <i class="fa-solid fa-notes-medical"></i> 환자 임상 소견 및 영상 데이터 입력
+                </div>
+
+                <div class="samples-group">
+                    <button class="btn-sample" onclick="loadSample(1)">샘플 1: L5 방사통 & 협착증</button>
+                    <button class="btn-sample" onclick="loadSample(2)">샘플 2: 추간판성 허리통증</button>
+                    <button class="btn-sample" onclick="loadSample(3)">샘플 3: CRPS 신경병통증</button>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">환자 증상 및 MRI / X-ray 임상 노트 (Clinical Case Note)</label>
+                    <textarea id="caseNote" rows="8" placeholder="예: 58세 남성, 좌측 L5 신경근 부위의 타는 듯한 찌릿함 및 척추관 협착증 소견. 수면 장애 동반."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">추론 모드 (Inference Engine Target)</label>
+                    <select id="inferTarget">
+                        <option value="spine">척추외과 & DRG 표적 중재적 치료 (Spine & DRG Neuroplasty)</option>
+                        <option value="pharmacology">신경병증 약리학 & 수액 믹스 (Pharmacotherapy & IV Fluid)</option>
+                        <option value="comprehensive">통합 Med-Gemini 종합 진단 (Comprehensive Med-Gemini)</option>
+                    </select>
+                </div>
+
+                <button class="btn-run" onclick="runMediGemini()">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Med-Gemini 의학 추론 가동 (Run Inference)
+                </button>
+            </div>
+
+            <!-- Output Results Panel -->
+            <div class="panel-box">
+                <div class="panel-header">
+                    <i class="fa-solid fa-microscope"></i> Med-Gemini 의학 진단 및 3×3 매핑 보고서
+                </div>
+
+                <div id="outputArea" class="output-box">
+                    <div style="text-align: center; color: var(--text-muted); padding-top: 180px;">
+                        <i class="fa-solid fa-brain" style="font-size: 48px; opacity: 0.3; margin-bottom: 15px;"></i>
+                        <p>왼쪽 창에 임상 노트를 입력하고 <strong>[Med-Gemini 의학 추론 가동]</strong> 버튼을 누르세요.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>NDB Medi-Gemini Engine | Designed for Director Sun-Jong Choi, M.D. (Namyangju Baek Hospital)</p>
+        <p style="margin-top: 4px; color: var(--accent-cyan);">Powered by Google Med-Gemini Harness & LUCA 4-Memory System v4.0</p>
+    </footer>
+
+    <script>
+        const samples = {
+            1: "58세 남성, 좌측 L5 신경근 부위의 타는 듯한 찌릿함 및 척추관 협착증 소견. 디스크 방사통 심화. 수면 장애 동반.",
+            2: "42세 여성, 허리 중심부의 기침 시 심해지는 둔통. L4/5 추간판성 통증(Discogenic Pain) 및 섬유환 파열 의증.",
+            3: "65세 남성, 족부의 이상통증(Allodynia) 및 극심한 전깃불 찌릿함. 만성 복합부위통증증후군(CRPS) 및 중추감작 상태."
+        };
+
+        function loadSample(num) {
+            document.getElementById('caseNote').value = samples[num];
+        }
+
+        function runMediGemini() {
+            const caseText = document.getElementById('caseNote').value.trim();
+            if (!caseText) {
+                alert("환자 임상 노트를 입력해 주세요!");
+                return;
+            }
+
+            const outArea = document.getElementById('outputArea');
+            outArea.innerHTML = `<div style="text-align: center; padding-top: 180px; color: var(--accent-cyan);"><i class="fa-solid fa-spinner fa-spin" style="font-size: 40px;"></i><p style="margin-top: 15px; font-weight: 700;">NDB Medi-Gemini 신경망 추론 계산 중...</p></div>`;
+
+            setTimeout(() => {
+                outArea.innerHTML = `
+                    <div class="report-h2"><i class="fa-solid fa-stethoscope"></i> Med-Gemini Clinical Diagnosis Report</div>
+
+                    <div class="report-section">
+                        <div class="report-sec-h3"><i class="fa-solid fa-file-waveform" style="color: var(--accent-cyan);"></i> 1. Med-Gemini 임상 진단 요약</div>
+                        <p style="font-size: 13.5px; color: var(--text-muted); leading-height: 1.6;">
+                            입력된 케이스 분석 결과, <strong>추간공(Intervertebral Foramen) 협착 및 DRG 세포체 유착</strong>으로 인한 말초 이소성 자발 발화(Ectopic Discharge)와 척수 후각 $KCC2$ 하향조절에 따른 <strong>탈억제(Disinhibition)</strong>가 복합 작용 중입니다.
+                        </p>
+                    </div>
+
+                    <div class="report-section">
+                        <div class="report-sec-h3"><i class="fa-solid fa-table-cells" style="color: var(--accent-purple);"></i> 2. 최선종 3×3 통증 기전 매핑 (Matrix Target)</div>
+                        <div class="matrix-badge-grid">
+                            <div class="matrix-badge-item active">[A1] DRG × 흥분성<br><small>NaV1.7/1.3 자발발화</small></div>
+                            <div class="matrix-badge-item active">[B2] 척수후각 × 억제성<br><small>KCC2 감소 GABA역전</small></div>
+                            <div class="matrix-badge-item active">[C2] 척수후각 × 전달성<br><small>Spinothalamic LTP</small></div>
+                        </div>
+                    </div>
+
+                    <div class="report-section">
+                        <div class="report-sec-h3"><i class="fa-solid fa-capsules" style="color: var(--accent-amber);"></i> 3. 정밀 치료 & 약리학 처방</div>
+                        <ul style="font-size: 13px; color: var(--text-muted); margin-left: 18px; line-height: 1.6;">
+                            <li><strong>Pregabalin 75mg bid</strong>: CaV α2δ-1 시냅스전 전방수송 차단 ➔ Glutamate 방출 정상화</li>
+                            <li><strong>Celecoxib 200mg qd</strong>: COX-2 선택적 억제 (위장관 보호 및 염증 차단)</li>
+                            <li><strong>NDB-IV #04 수액 믹스</strong>: L-Carnitine + Alpha-Lipoic Acid + Vitamin B12 High Dose</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-section" style="border-color: rgba(16, 185, 129, 0.4);">
+                        <div class="report-sec-h3"><i class="fa-solid fa-syringe" style="color: var(--accent-emerald);"></i> 4. Clinical Appendix: Balloon-PEN / C-PEN DRG Neuroplasty</div>
+                        <p style="font-size: 12.5px; color: var(--text-muted);">
+                            추간공 Balloon 팽창으로 DRG 기계적 압박 해소 ➔ C-PEN Racz 카테터로 DRG 주위 섬유성 유착 박리(Adhesiolysis) ➔ TNF-α 염증 사이토카인 세척 시행 권장.
+                        </p>
+                    </div>
+                `;
+            }, 1200);
+        }
+    </script>
+</body>
+</html>

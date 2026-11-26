@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDB Medi-Gemini Comprehensive Medical Ontology Master | 8 Domains</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #070a12;
+            --bg-card: #0f172a;
+            --border-color: #1e293b;
+            --accent-cyan: #06b6d4;
+            --accent-blue: #38bdf8;
+            --accent-indigo: #6366f1;
+            --accent-purple: #a855f7;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-main);
+            background-image: radial-gradient(circle at 50% 10%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
+            min-height: 100vh; padding-bottom: 50px;
+        }
+        header { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); padding: 20px 40px; }
+        .header-container { max-width: 1600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo-title { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; background: linear-gradient(90deg, #fff, #38bdf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .container { max-width: 1600px; margin: 30px auto; padding: 0 30px; }
+        
+        .domains-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .domain-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px;
+            transition: all 0.3s ease; cursor: pointer;
+        }
+        .domain-card:hover { border-color: var(--accent-cyan); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(6, 182, 212, 0.25); }
+        .domain-icon { font-size: 28px; color: var(--accent-cyan); margin-bottom: 10px; }
+        .domain-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        .domain-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+        .ontology-table-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; }
+        .table-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+        th { background: rgba(30, 41, 59, 0.8); color: var(--accent-cyan); font-weight: 700; }
+        td { color: var(--text-muted); background: rgba(15, 23, 42, 0.4); }
+        tr:hover td { background: rgba(30, 41, 59, 0.5); color: #fff; }
+        
+        footer { text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-title">NDB Medi-Gemini 8-Domain Medical Ontology Master</div>
+            <div style="font-size: 13px; color: var(--accent-emerald); font-weight: 700;">
+                <i class="fa-solid fa-network-wired"></i> Fully Connected to LUCA 4-Memory Engine
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="domains-grid">
+            <div class="domain-card">
+                <div class="domain-icon"><i class="fa-solid fa-table-cells"></i></div>
+                <div class="domain-title">1. Choi 3×3 Matrix</div>
+                <div class="domain-desc">Excitation ✕ Inhibition ✕ Transmission 3축 및 DRG 1st 관문 연결</div>
+            </div>
+            <div class="domain-card">
+                <div class="domain-icon"><i class="fa-solid fa-bone"></i></div>
+                <div class="domain-title">2. Spine Pathology</div>
+                <div class="domain-desc">HIVD, 협착증, 후관절 증후군, 추간판성 통증, CRPS 신경생리</div>
+            </div>
+            <div class="domain-card">
+                <div class="domain-icon"><i class="fa-solid fa-laptop-medical"></i></div>
+                <div class="domain-title">3. MIS Spine Surgery</div>
+                <div class="domain-desc">BESS/UBE, PELD, OLIF/ALIF, Dural Tear 응급 관리 지침</div>
+            </div>
+            <div class="domain-card">
+                <div class="domain-icon"><i class="fa-solid fa-syringe"></i></div>
+                <div class="domain-title">4. Pain Procedures</div>
+                <div class="domain-desc">Balloon-PEN / C-PEN DRG 유착박리 및 염증 세척 시술</div>
+            </div>
+            <div class="domain-card">
+                <div class="domain-icon"><i class="fa-solid fa-pills"></i></div>
+                <div class="domain-title">5. Clinical Pharmacology</div>
+                <div class="domain-desc">Pregabalin CaV α2δ-1 시냅스전 수송 차단, SNRIs, COX-2</div>
+            </div>
+            <div class="domain-card">
+                <div class="domain-icon"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+                <div class="domain-title">6. NDB IV Fluid Protocols</div>
+                <div class="domain-desc">NDB-IV #01~#30 (L-Carnitine, Alpha-Lipoic Acid, Vit B12)</div>
+            </div>
+            <div class="domain-card">
+                <div class="domain-icon"><i class="fa-solid fa-eye"></i></div>
+                <div class="domain-title">7. PACS Vision AI</div>
+                <div class="domain-desc">X-Ray Cobb's Angle, Lordosis, MRI Modic Change 시각 판독</div>
+            </div>
+            <div class="domain-card">
+                <div class="domain-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                <div class="domain-title">8. 2026 Reimbursement</div>
+                <div class="domain-desc">2026 요양급여 고시, 도수치료 FDS, 삭감 피봇 & 비급여 전략</div>
+            </div>
+        </div>
+
+        <div class="ontology-table-box">
+            <div class="table-title">
+                <i class="fa-solid fa-diagram-project"></i> NDB Medi-Gemini 8대 통합 의학 온톨로지 트리플 (Fact Triples)
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Domain</th>
+                        <th>Subject (주어)</th>
+                        <th>Predicate (서술어/관계)</th>
+                        <th>Object (목적어/개념)</th>
+                        <th>Clinical Relevance (임상적 함의)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>3x3 Pain Matrix</td><td>DRG Gate (Cell A1)</td><td>EXCITES_VIA</td><td>NaV1.7 / NaV1.3 Up-regulation</td><td>말초 이소성 자발 발화(Ectopic Discharge) 유발</td></tr>
+                    <tr><td>3x3 Pain Matrix</td><td>Spinal Horn (Cell B2)</td><td>DISINHIBITS_VIA</td><td>KCC2 Down-regulation & GABA Reversal</td><td>억제성 Cl- 이온 농도 증가로 GABAA 탈억제 유발</td></tr>
+                    <tr><td>Spine Pathology</td><td>HIVD (Disc Herniation)</td><td>CAUSES</td><td>Radiculopathy & Chemical Neuritis</td><td>수핵 탈출 및 TNF-α 염증 방출로 신경근 감작</td></tr>
+                    <tr><td>MIS Surgery</td><td>BESS / UBE</td><td>PERFORMS</td><td>Biportal Endoscopic Decompression</td><td>2개 소절개 내시경으로 신경근 및 황색인대 선택 절제</td></tr>
+                    <tr><td>Interventions</td><td>Balloon-PEN</td><td>TARGETS</td><td>Foramen & DRG Adhesiolysis</td><td>풍선 확장 및 DRG 주위 섬유성 유착 물리적 박리</td></tr>
+                    <tr><td>Pharmacology</td><td>Pregabalin</td><td>BLOCKS</td><td>CaV a2d-1 Presynaptic Trafficking</td><td>DRG 세포체에서 척수로의 a2d-1 이동 차단 ➔ Glutamate 방출 정상화</td></tr>
+                    <tr><td>IV Fluids</td><td>NDB-IV #04</td><td>CONTAINS</td><td>L-Carnitine + Alpha-Lipoic Acid + Vit B12</td><td>신경 부종 및 통증성 신경염증 집중 감소 수액</td></tr>
+                    <tr><td>PACS Vision AI</td><td>X-Ray Cobb's Angle</td><td>MEASURES</td><td>Spinal Deformity & Scoliosis Degree</td><td>척추 측만 및 변형 각도 자동 시각 측정</td></tr>
+                    <tr><td>Reimbursement</td><td>Physical Therapy</td><td>REGULATED_BY</td><td>2026 Admin Order & FDS Guideline</td><td>도수치료 횟수 관리 및 비급여 피봇 가이드 준수</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>NDB Medi-Gemini Master Ontology | Designed for Director Sun-Jong Choi, M.D.</p>
+        <p style="margin-top: 4px; color: var(--accent-cyan);">Powered by LUCA 4-Memory System v4.0</p>
+    </footer>
+</body>
+</html>
