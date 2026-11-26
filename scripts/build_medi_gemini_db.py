@@ -49,6 +49,222 @@ ONTOLOGY_TRIPLES = [
     ("Anticoagulation Safety", "Neuraxial PEN / Spine Surgery", "REQUIRES", "Anticoagulant Washout Verification", "Rivaroxaban/Apixaban 72h, Clopidogrel 5-7d 중단 미확인 시 경막외 혈종 위험"),
     ("HIRA 2026", "Ja-46 Spine Surgery Claim", "REQUIRES", "6-Week Conservative Record OR SMC <= 3 / CES", "심평원 삭감 제로 및 적정 진료 컴플라이언스 보장"),
     ("Medical Ethics", "Non-Covered IV / Procedure", "REQUIRES", "Purpose-Limit-Cost Explanation & Choice/Refusal Log", "환자 자기결정권 존중 및 민원/법적 리스크 원천 차단"),
+    ("Med-Gemini-L UGS", "Diagnostic Entropy H > 0.85", "TRIGGERS", "Uncertainty-Guided PubMed/HIRA Search", "불확실성 감지 시 추측 대신 표적 근거 검색 및 온도 보정(Temperature Scaling) 수행"),
+    ("Med-Gemini-M EHR", "Longitudinal Multi-Visit Record", "EXTRACTS", "Needle-in-Haystack Allergy / eGFR Slope / FHIR R4", "수년치 장문 의무기록 속 숨겨진 알레르기·신기능 하락 추세·중복처방 검출"),
+    ("Med-Gemini-2D Vision", "Spine/Chest X-ray & 12-Lead ECG", "QUANTIFIES", "PI-LL, Cobb Angle, CTR, ST-Segment & Tent-T", "멀티모달 시각 지능과 기호 측정치 임계값의 이중 교차 검증"),
+    ("Med-Gemini-3D MRI", "3.0T Spine/Brain Volumetric Series", "GRADES", "Pfirrmann, Modic, Lee Stenosis, POSEH & DWI", "영상 형태학적 등급과 실제 피부분절/신경학적 증상의 일치도 판별"),
+    ("Med-Gemini-PGx", "CPIC Pharmacogenomic Variants", "BLOCKS_OR_ADJUSTS", "CYP2C19, CYP2D6, HLA-B*58:01, HLA-B*15:02, G6PD", "유전체 변이 기반 치명적 중증피부이상반응(SCAR) 및 치료실패 원천 예방"),
+    ("Deep Twin Bias Shield", "Incidental MRI Bulge + Flank Fever", "NEUTRALIZES", "Anchoring & Premature Closure Bias", "영상 우연종에 닻내림(Anchoring)하지 않고 신우신염·혈관파행·중추감작을 교차 감별"),
+]
+
+
+JEV_MEDICAL_ROUTES = [
+    {
+        "route_id": "MG_ROUTE_01_EMERGENCY_TRIAGE",
+        "capability": "Med-Gemini Rapid Emergency Triage",
+        "track": "FAST_TRACK_KILLSWITCH",
+        "gemini_model": "gemini-2.5-flash",
+        "thinking_budget": "LOW_LATENCY_DETERMINISTIC_FIRST",
+        "trigger_cues": ["흉통", "식은땀", "호흡곤란", "마미총", "배뇨장애", "안장", "족하수", "수술 후 마비", "구음장애", "편마비", "벼락두통", "아나필락시스", "의식저하", "반발통", "토혈", "혈변"],
+        "required_engines": ["RedFlag17Gate", "NEWS2Calculator", "GoldenTimeTransferProtocol"],
+        "stake_threshold": 0.95,
+    },
+    {
+        "route_id": "MG_ROUTE_02_DDX_UGS",
+        "capability": "Med-Gemini-L 1.5 Uncertainty-Guided Search & Bayesian DDx",
+        "track": "DEEP_TRACK_CLINICAL_REASONING",
+        "gemini_model": "gemini-2.5-pro",
+        "thinking_budget": "HIGH_THINKING + GOOGLE_SEARCH_GROUNDING",
+        "trigger_cues": ["감별진단", "원인 불명", "불확실", "최신 가이드라인", "논문", "희귀", "치료 불응", "복합 증상", "ddx"],
+        "required_engines": ["BayesianDDxEngine", "ShannonEntropyUGS", "Munger3Basket", "BiasScanner"],
+        "stake_threshold": 0.85,
+    },
+    {
+        "route_id": "MG_ROUTE_03_LONG_EHR",
+        "capability": "Med-Gemini-M 1.5 Long-Context EHR Needle-in-a-Haystack & FHIR",
+        "track": "DEEP_TRACK_LONG_CONTEXT",
+        "gemini_model": "gemini-2.5-pro",
+        "thinking_budget": "LONG_CONTEXT_1M_WINDOW",
+        "trigger_cues": ["경과기록", "퇴원요약", "초진기록", "과거력", "수년간", "의무기록", "차트 요약", "fhir", "연속 검사", "이전 방문"],
+        "required_engines": ["LongitudinalNeedleDetector", "DeltaTrajectoryEngine", "SOAPAndFHIRGenerator"],
+        "stake_threshold": 0.80,
+    },
+    {
+        "route_id": "MG_ROUTE_04_VISION_2D",
+        "capability": "Med-Gemini-2D Medical Vision (X-ray / 12-Lead ECG / Derm / Burn)",
+        "track": "MULTIMODAL_2D_TRACK",
+        "gemini_model": "gemini-2.5-flash",
+        "thinking_budget": "MULTIMODAL_VISION_STRUCTURED",
+        "trigger_cues": ["x-ray", "엑스레이", "단순방사선", "cobb", "전방전위", "흉부 촬영", "cxr", "심전도", "ecg", "ekg", "수포", "화상", "저온화상", "피부 병변"],
+        "required_engines": ["Vision2DEncoder", "SymbolicRadiologyECGThresholds", "ClinicalCorrelationGate"],
+        "stake_threshold": 0.85,
+    },
+    {
+        "route_id": "MG_ROUTE_05_VISION_3D",
+        "capability": "Med-Gemini-3D Volumetric CT / 3.0T MRI Series & Radiology Report",
+        "track": "MULTIMODAL_3D_TRACK",
+        "gemini_model": "gemini-2.5-pro",
+        "thinking_budget": "HIGH_THINKING_VOLUMETRIC_CORRELATION",
+        "trigger_cues": ["mri", "ct", "3.0t", "pfirrmann", "modic", "lee grade", "추간공 협착", "황색인대", "dwi", "mrcp", "조영증강", "판독지"],
+        "required_engines": ["Volumetric3DGrader", "MorphologySymptomDiscordanceCheck", "SNSSurgicalGate"],
+        "stake_threshold": 0.90,
+    },
+    {
+        "route_id": "MG_ROUTE_06_GENOMICS_PGX",
+        "capability": "Med-Gemini Polygenic & CPIC Pharmacogenomics (PGx) Precision Medicine",
+        "track": "SYMBOLIC_PRECISION_TRACK",
+        "gemini_model": "gemini-2.5-flash",
+        "thinking_budget": "DETERMINISTIC_CPIC_FIREWALL",
+        "trigger_cues": ["cyp2c19", "cyp2d6", "cyp2c9", "hla-b", "g6pd", "slco1b1", "유전체", "약물유전체", "pgx", "알로푸리놀", "카바마제핀", "클로피도그렐 저항"],
+        "required_engines": ["CPICPharmacogenomicsGate", "RenalGeriatricDDIFirewall"],
+        "stake_threshold": 0.90,
+    },
+    {
+        "route_id": "MG_ROUTE_07_AMIE_DIALOGUE",
+        "capability": "Med-Gemini / AMIE Empathetic History-Taking & Patient De-Catastrophizing",
+        "track": "FAST_TRACK_COMMUNICATION",
+        "gemini_model": "gemini-2.5-flash",
+        "thinking_budget": "EMPATHETIC_STRUCTURED_DIALOGUE",
+        "trigger_cues": ["환자 설명", "쉽게 설명", "비유", "동의서", "문진", "불안해하", "수술 무서워", "생활수칙", "교육자료"],
+        "required_engines": ["VOIQuestionRanker", "ChoiCognitiveMetaphors", "NonCoveredConsentBuilder"],
+        "stake_threshold": 0.75,
+    },
+]
+
+
+DEEP_TWIN_TACIT_RULES = [
+    {
+        "rule_id": "TACIT_01_MRI_DISCORDANCE",
+        "context": "MRI상 디스크 돌출/팽윤이 관찰되나 환자의 피부분절(Dermatome)·이학적 징후와 불일치하거나 만성 전신통·수면장애가 주된 경우",
+        "tacit_principle": "영상 사진을 수술하지 말고 환자의 신경생리 기전과 베이즈 위협 예측(Prior)을 치료하라 (데카르트 전선 모델 탈피)",
+        "munger_basket": "NO_M0_FOR_SURGERY / YES_M1_FOR_CENTRAL_RESET",
+        "action_rule": "조기 수술·반복 주사(M=0) 즉시 배제 -> 상위 요추/혈관/신장 감별 후 저녁 20시 Duloxetine + 통증 신경과학 교육(화재경보기 비유) 적용",
+        "bias_shield": "Anchoring Bias (영상 소견 닻내림 편향) & Commission Bias 차단",
+    },
+    {
+        "rule_id": "TACIT_02_YOUNG_LARGE_DISC_ABSORPTION",
+        "context": "급성 거대 추간판 탈출(Extrusion/Sequestration)이나 진행성 운동마비(SMC <= 3) 및 마미총 징후가 없는 환자",
+        "tacit_principle": "탈출된 수핵이 클수록 혈관 노출로 인한 대식세포(Macrophage) 자연 흡수율(70~80%)이 오히려 높다",
+        "munger_basket": "YES_M1_CONSERVATIVE_OR_PEN",
+        "action_rule": "개방형 수핵절제술/유합술(M=0) 배제 -> Balloon-PEN/C-PEN 염증 수프 세척 + 요추 굴곡 절대 금지로 자연 흡수 유도 (단, SMC <= 3 저하 시 즉시 BESS 전환)",
+        "bias_shield": "Action/Surgical Intervention Bias 차단",
+    },
+    {
+        "rule_id": "TACIT_03_ELDERLY_STENOSIS_NO_FUSION",
+        "context": "고령·골다공증 동반 퇴행성 요추관 협착증 환자(동적 불안정성 < 4~5mm)",
+        "tacit_principle": "노인의 약한 뼈에 불필요한 나사못 유합술은 불유합과 인접분절병증(ASD)의 지름길이다",
+        "munger_basket": "YES_M1_BESS_DECOMPRESSION / NO_M0_FUSION",
+        "action_rule": "족배동맥 맥박/ABI로 혈관성 파행 먼저 배제 후, 비수술 불응 시 후관절 80% 보존 BESS 양방향 내시경 감압술만 선택",
+        "bias_shield": "Over-instrumentation Bias 차단",
+    },
+    {
+        "rule_id": "TACIT_04_CHRONOPHARMACOLOGY_03AM",
+        "context": "새벽 3~4시 악화되는 신경병증성/만성 통증 및 야간 수면 분절",
+        "tacit_principle": "코르티솔 저하와 염증 사이토카인 피크가 겹치는 새벽 3~4시 시냅스를 약동학 Tmax로 선제 점유하라",
+        "munger_basket": "YES_M1_CHRONO_ALIGNMENT",
+        "action_rule": "Duloxetine 저녁 식후(20:00, Tmax 6h) + Pregabalin 취침 전(HS, 신기능 eGFR 맞춤 용량) 투여",
+        "bias_shield": "Routine Morning-Dosing Inertia 차단",
+    },
+    {
+        "rule_id": "TACIT_05_RENAL_ANTICOAG_IMMUNE_GATE",
+        "context": "처방 또는 척추 중재시술/수술 직전 고령·다약제·만성콩팥병 환자",
+        "tacit_principle": "치료 효과보다 무해성(Primum non nocere)이 절대 우선한다 — 신기능과 지혈 상태 확인 없는 처방·천자는 금지한다",
+        "munger_basket": "NO_M0_NEPHROTOXIC_AND_UNHELD_ANTICOAG",
+        "action_rule": "eGFR < 30 시 NSAIDs·Duloxetine 하드 블록 및 Pregabalin 25mg qd 감량; NOAC(72h)/Clopidogrel(5-7d) 휴약 미확인 시 경막외 시술 보류(TOO TOUGH -> 협진 확인)",
+        "bias_shield": "Omission of Comorbidity / Search Satisficing 차단",
+    },
+    {
+        "rule_id": "TACIT_06_UNCERTAINTY_HUMILITY_GATE",
+        "context": "진단 샤논 엔트로피 H > 0.85 이거나 치명적 배제진단(Must-Not-Miss)의 핵심 단서(예: hCG, ECG, 혈액배양, 족배동맥)가 미확인된 상태",
+        "tacit_principle": "모르는 것을 안다고 확신하는 AI 과잉확신이 가장 위험하다 — 애매하면 멈추고 정보이득(VOI) 1순위 검사와 문헌 근거부터 확보하라",
+        "munger_basket": "TOO_TOUGH_DEFER_AND_VERIFY",
+        "action_rule": "확정 진단 단정 금지 -> Med-Gemini Uncertainty-Guided Search 쿼리 발동 + VOI 최상위 문진/검사 우선 시행 후 재보정",
+        "bias_shield": "Overconfidence & Premature Closure Bias 차단",
+    },
+]
+
+
+PGX_RULES = [
+    {
+        "gene_biomarker": "CYP2C19 (*2/*3 Loss-of-Function)",
+        "phenotype_trigger": ["cyp2c19", "poor metabolizer", "*2/*2", "*2/*3", "클로피도그렐 저항"],
+        "affected_drugs": "Clopidogrel (플라빅스)",
+        "cpic_level": "CPIC Level A",
+        "clinical_risk": "활성 대사체 전환 불능으로 항혈소판 효과 소실 -> 뇌졸중/스텐트 혈전 재발 위험",
+        "action_rule": "🚫 Clopidogrel 회피(M=0) -> Prasugrel 또는 Ticagrelor(금기 확인 후) 등 대체 항혈소판제 전환",
+    },
+    {
+        "gene_biomarker": "CYP2D6 (Ultra-rapid / Poor Metabolizer)",
+        "phenotype_trigger": ["cyp2d6", "ultra-rapid", "초고속 대사", "코데인 독성", "트라마돌 무효"],
+        "affected_drugs": "Codeine, Tramadol (울트라셋 포함)",
+        "cpic_level": "CPIC Level A",
+        "clinical_risk": "초고속 대사자(UM)는 모르핀/활성체 급증으로 치명적 호흡억제 위험; 저대사자(PM)는 진통 효과 부재",
+        "action_rule": "🚫 Codeine/Tramadol 회피(M=0) -> 비-CYP2D6 경로 진통제(Acetaminophen, 국소 패치 등) 사용",
+    },
+    {
+        "gene_biomarker": "HLA-B*58:01 Positive",
+        "phenotype_trigger": ["hla-b*58:01", "hla-b5801", "알로푸리놀 유전자 양성"],
+        "affected_drugs": "Allopurinol (통풍 요산강하제)",
+        "cpic_level": "CPIC Level A (한국인 양성률 ~12% 고위험!)",
+        "clinical_risk": "치명적 중증피부약물이상반응(SJS/TEN, DRESS 증후군) 발생 위험 급증",
+        "action_rule": "🚫 Allopurinol 절대 금기(M=0) -> Febuxostat(심혈관 위험 확인) 대체 처방",
+    },
+    {
+        "gene_biomarker": "HLA-B*15:02 / HLA-A*31:01 Positive",
+        "phenotype_trigger": ["hla-b*15:02", "hla-b1502", "hla-a*31:01"],
+        "affected_drugs": "Carbamazepine, Oxcarbazepine (삼차신경통/항경련제)",
+        "cpic_level": "CPIC Level A",
+        "clinical_risk": "스티븐스-존슨 증후군(SJS) / 독성표피괴사용해(TEN) 유발",
+        "action_rule": "🚫 Carbamazepine/Oxcarbazepine 절대 금기(M=0) -> Pregabalin/Gabapentin 또는 Lamotrigine(완속 증량) 대체",
+    },
+    {
+        "gene_biomarker": "CYP2C9 (*3/*3 or Poor Metabolizer)",
+        "phenotype_trigger": ["cyp2c9", "*3/*3", "와파린 과민"],
+        "affected_drugs": "Celecoxib, Meloxicam, Ibuprofen, Warfarin",
+        "cpic_level": "CPIC Level A",
+        "clinical_risk": "약물 반감기 지연 및 혈중농도 상승으로 위장관 출혈·신독성·과항응고 위험",
+        "action_rule": "⚠️ Celecoxib 초기 용량 50% 감량 또는 Acetaminophen/국소제 전환; Warfarin 정밀 INR 감량",
+    },
+    {
+        "gene_biomarker": "G6PD Deficiency",
+        "phenotype_trigger": ["g6pd", "포도당-6-인산", "용혈성 빈혈 병력", "고용량 비타민c 수액 전"],
+        "affected_drugs": "High-Dose IV Vitamin C (메가도스 비타민C 수액), Rasburicase, Dapsone",
+        "cpic_level": "CPIC Level A",
+        "clinical_risk": "급성 산화성 용혈성 빈혈(Acute Hemolytic Crisis) 및 급성 신부전 유발",
+        "action_rule": "🚫 고용량 정주 비타민 C 수액 절대 금기(M=0)! 고용량(>10g) IVNT 전 G6PD 선별 확인 필수",
+    },
+]
+
+
+MULTIMODAL_SCHEMAS = [
+    {
+        "modality_code": "MOD_2D_SPINE_XRAY",
+        "modality_name": "2D Spine Standing & Dynamic X-ray",
+        "key_metrics_json": json.dumps(["Cobb_Angle_deg", "Lumbar_Lordosis_deg", "PI_minus_LL_deg", "Dynamic_Translation_mm", "Dynamic_Angulation_deg", "Disc_Height_Loss"], ensure_ascii=False),
+        "symbolic_thresholds": "Cobb >= 10도(측만증), PI-LL > 10도(시상면 불균형), 굴곡-신전 전위차 >= 4mm 또는 각도변화 > 10도(동적 불안정성 -> 단순 감압 넘어 안정화 검토 기준)",
+        "med_gemini_prompt": "정형외과·척추외과 영상 판독 표준에 따라 척추 정렬(Coronal/Sagittal alignment), 추체 압박골절 유무, 추간판 간격 협소, 골극, 전방전위 등급(Meyerding Grade I-IV) 및 동적 불안정성 수치를 구조화 추출하시오."
+    },
+    {
+        "modality_code": "MOD_2D_CHEST_XRAY",
+        "modality_name": "2D Chest Radiography (CXR PA/AP)",
+        "key_metrics_json": json.dumps(["Cardiothoracic_Ratio", "Lung_Parenchymal_Opacity", "Costophrenic_Angle_Blunting", "Pneumothorax_Line", "Mediastinal_Widening"], ensure_ascii=False),
+        "symbolic_thresholds": "CTR > 0.50(PA 기준 심비대), 늑골횡격막각 소실(흉수), 폐야 경화/침윤(폐렴 -> CURB-65 연동), 종격동 확장(흉통 동반 시 대동맥박리 즉시 CT 혈관조영!)",
+        "med_gemini_prompt": "기도(Airway)-폐야(Lung)-심음영(Cardiac)-횡격막/늑막(Pleura)-골격/종격동(Bone/Mediastinum) ABCDE 순서로 판독하고 즉시 처치가 필요한 기흉·폐부종·폐렴·종격동 확장을 우선 보고하시오."
+    },
+    {
+        "modality_code": "MOD_2D_ECG_12LEAD",
+        "modality_name": "12-Lead Electrocardiogram (ECG)",
+        "key_metrics_json": json.dumps(["Rhythm", "Heart_Rate_bpm", "PR_ms", "QRS_ms", "QTc_ms", "ST_Segment_Deviation", "T_Wave_Morphology"], ensure_ascii=False),
+        "symbolic_thresholds": "인접 2개 유도 이상 ST 상승/신규 LBBB(즉시 PCI 전원), 고첨 T파/QRS 확장(고칼륨혈증 -> 즉시 Calcium Gluconate IV), 불규칙 RR+P파 소실(심방세동 -> 뇌졸중 CHA2DS2-VASc 평가), QTc > 500ms(퀴놀론/마크로라이드/온단세트론 Torsades 위험 차단)",
+        "med_gemini_prompt": "심박수·리듬·축·PR/QRS/QTc 간격·ST절 편위·T파 역전/고첨 소견을 계통적으로 분석하고 급성 허혈 및 치명적 부정맥 징후를 최상단에 경고하시오."
+    },
+    {
+        "modality_code": "MOD_3D_SPINE_MRI",
+        "modality_name": "3D / Cross-Sectional 3.0T Spine MRI (T1/T2/STIR/Contrast)",
+        "key_metrics_json": json.dumps(["Pfirrmann_Grade_1_5", "Modic_Type_0_3", "Lee_Central_Stenosis_0_3", "Lee_Foraminal_Stenosis_0_3", "Cord_T2_Hyperintensity", "Epidural_Fluid_Hematoma_Abscess"], ensure_ascii=False),
+        "symbolic_thresholds": "Lee Grade 3(신경근 주변 지방 완전 소실 + 형태 변형 = 중증 협착), 척수 내 T2 고신호(Myelomalacia -> 조기 감압 필요, 도수교정 금기), STIR 종판 고신호+조영증강(화농성 척추염 -> 스테로이드 주사 절대 금기), 수술후 경막외 종괴 압박(POSEH -> 응급 혈종제거)",
+        "med_gemini_prompt": "시상면(Sagittal)과 축상면(Axial)을 교차 대조하여 병변 분절(L1~S1 / C2~T1), 탈출 방향(중심성/외측함요/추간공), 신경근 압박 등급 및 환자의 실제 피부분절 증상과의 일치 여부를 판정하시오."
+    },
 ]
 
 
@@ -903,6 +1119,120 @@ def build_database(db_path: Path = DB_PATH) -> dict:
         );
     """)
 
+    # 7. JEV Medical Smart Router Table (7 Med-Gemini Capabilities)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS jev_medical_routes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            route_id TEXT UNIQUE NOT NULL,
+            capability TEXT NOT NULL,
+            track TEXT NOT NULL,
+            gemini_model TEXT NOT NULL,
+            thinking_budget TEXT NOT NULL,
+            trigger_cues_json TEXT NOT NULL,
+            required_engines_json TEXT NOT NULL,
+            stake_threshold REAL NOT NULL
+        );
+    """)
+    cur.execute("DELETE FROM jev_medical_routes;")
+    for rt in JEV_MEDICAL_ROUTES:
+        cur.execute(
+            """INSERT INTO jev_medical_routes
+               (route_id, capability, track, gemini_model, thinking_budget, trigger_cues_json, required_engines_json, stake_threshold)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
+            (
+                rt["route_id"],
+                rt["capability"],
+                rt["track"],
+                rt["gemini_model"],
+                rt["thinking_budget"],
+                json.dumps(rt["trigger_cues"], ensure_ascii=False),
+                json.dumps(rt["required_engines"], ensure_ascii=False),
+                rt["stake_threshold"],
+            ),
+        )
+
+    # 8. Deep Twin Tacit Rules & Munger 3-Basket Table
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS deep_twin_tacit_rules (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            rule_id TEXT UNIQUE NOT NULL,
+            context TEXT NOT NULL,
+            tacit_principle TEXT NOT NULL,
+            munger_basket TEXT NOT NULL,
+            action_rule TEXT NOT NULL,
+            bias_shield TEXT NOT NULL
+        );
+    """)
+    cur.execute("DELETE FROM deep_twin_tacit_rules;")
+    for tr in DEEP_TWIN_TACIT_RULES:
+        cur.execute(
+            """INSERT INTO deep_twin_tacit_rules
+               (rule_id, context, tacit_principle, munger_basket, action_rule, bias_shield)
+               VALUES (?, ?, ?, ?, ?, ?);""",
+            (
+                tr["rule_id"],
+                tr["context"],
+                tr["tacit_principle"],
+                tr["munger_basket"],
+                tr["action_rule"],
+                tr["bias_shield"],
+            ),
+        )
+
+    # 9. CPIC Pharmacogenomics (PGx) Precision Medicine Rules
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS pharmacogenomics_pgx_rules (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            gene_biomarker TEXT UNIQUE NOT NULL,
+            phenotype_trigger_json TEXT NOT NULL,
+            affected_drugs TEXT NOT NULL,
+            cpic_level TEXT NOT NULL,
+            clinical_risk TEXT NOT NULL,
+            action_rule TEXT NOT NULL
+        );
+    """)
+    cur.execute("DELETE FROM pharmacogenomics_pgx_rules;")
+    for pgx in PGX_RULES:
+        cur.execute(
+            """INSERT INTO pharmacogenomics_pgx_rules
+               (gene_biomarker, phenotype_trigger_json, affected_drugs, cpic_level, clinical_risk, action_rule)
+               VALUES (?, ?, ?, ?, ?, ?);""",
+            (
+                pgx["gene_biomarker"],
+                json.dumps(pgx["phenotype_trigger"], ensure_ascii=False),
+                pgx["affected_drugs"],
+                pgx["cpic_level"],
+                pgx["clinical_risk"],
+                pgx["action_rule"],
+            ),
+        )
+
+    # 10. Multimodal 2D/3D Medical Vision Schemas
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS multimodal_vision_3d_schemas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            modality_code TEXT UNIQUE NOT NULL,
+            modality_name TEXT NOT NULL,
+            key_metrics_json TEXT NOT NULL,
+            symbolic_thresholds TEXT NOT NULL,
+            med_gemini_prompt TEXT NOT NULL
+        );
+    """)
+    cur.execute("DELETE FROM multimodal_vision_3d_schemas;")
+    for ms in MULTIMODAL_SCHEMAS:
+        cur.execute(
+            """INSERT INTO multimodal_vision_3d_schemas
+               (modality_code, modality_name, key_metrics_json, symbolic_thresholds, med_gemini_prompt)
+               VALUES (?, ?, ?, ?, ?);""",
+            (
+                ms["modality_code"],
+                ms["modality_name"],
+                ms["key_metrics_json"],
+                ms["symbolic_thresholds"],
+                ms["med_gemini_prompt"],
+            ),
+        )
+
     conn.commit()
     stats = {
         "db_path": str(db_path),
@@ -911,6 +1241,10 @@ def build_database(db_path: Path = DB_PATH) -> dict:
         "clinical_syndromes_ddx": cur.execute("SELECT COUNT(*) FROM clinical_syndromes_ddx").fetchone()[0],
         "drug_safety_formulary": cur.execute("SELECT COUNT(*) FROM drug_safety_formulary").fetchone()[0],
         "hira_reimbursement_rules": cur.execute("SELECT COUNT(*) FROM hira_reimbursement_rules").fetchone()[0],
+        "jev_medical_routes": cur.execute("SELECT COUNT(*) FROM jev_medical_routes").fetchone()[0],
+        "deep_twin_tacit_rules": cur.execute("SELECT COUNT(*) FROM deep_twin_tacit_rules").fetchone()[0],
+        "pharmacogenomics_pgx_rules": cur.execute("SELECT COUNT(*) FROM pharmacogenomics_pgx_rules").fetchone()[0],
+        "multimodal_vision_3d_schemas": cur.execute("SELECT COUNT(*) FROM multimodal_vision_3d_schemas").fetchone()[0],
     }
     conn.close()
     return stats

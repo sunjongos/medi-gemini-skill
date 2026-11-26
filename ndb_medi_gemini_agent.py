@@ -989,10 +989,15 @@ NDBMediGeminiEngine = NDBMediGeminiWorldBestEngine
 
 
 def main():
-    parser = argparse.ArgumentParser(description="NDB Medi-Gemini Clinical Assist AI Engine v5.0 World-Best")
+    parser = argparse.ArgumentParser(description="NDB Medi-Gemini Clinical Assist AI Engine v6.0 (JEV Router x Deep Twin x Ontology)")
     parser.add_argument("--case", type=str, default="58세 남성, 좌측 L5 신경근 피부분절 타는 듯한 방사통 및 100m 파행, 새벽 3시 통증 악화, 겨울 감기 기침과 변비로 허리 통증 심화. 아스피린 복용 중.", help="Patient clinical case description")
-    parser.add_argument("--mode", type=str, default="all", choices=["all", "loop", "soap", "triage", "ddx", "matrix", "plan", "safety", "explain", "hira"], help="Clinical assist output mode")
+    parser.add_argument("--mode", type=str, default="neurosymbolic", choices=["neurosymbolic", "all", "loop", "soap", "triage", "ddx", "matrix", "plan", "safety", "explain", "hira"], help="Clinical assist output mode")
     parser.add_argument("--benchmark", action="store_true", help="Run 14-case multi-specialty clinical trap benchmark")
+    parser.add_argument("--image", type=str, default=None, help="Optional path to 2D/3D medical image (X-ray / ECG / MRI)")
+    parser.add_argument("--modality", type=str, default=None, help="Optional imaging modality hint (xray, cxr, ecg, mri, ct)")
+    parser.add_argument("--ehr-file", type=str, default=None, help="Optional longitudinal EHR text file path")
+    parser.add_argument("--fhir", action="store_true", help="Output HL7 FHIR R4 Bundle JSON")
+    parser.add_argument("--live-ugs", action="store_true", help="Enable live Gemini Google Search Grounding when API key is set")
     parser.add_argument("--smc", type=float, default=4.5, help="SMC Motor Grade (0~5)")
     parser.add_argument("--vas", type=float, default=7.5, help="Current VAS Pain (0~10)")
     parser.add_argument("--prev-vas", type=float, default=8.0, help="Previous Visit VAS Pain (0~10)")
@@ -1015,6 +1020,25 @@ def main():
         sys.path.insert(0, str(BASE_DIR / "scripts"))
         from benchmark_assist_loop import run_benchmark
         print(json.dumps(run_benchmark(), ensure_ascii=False, indent=2))
+        return
+
+    if args.mode == "neurosymbolic" or args.fhir or args.image or args.ehr_file:
+        sys.path.insert(0, str(BASE_DIR / "scripts"))
+        from medi_gemini_neurosymbolic_orchestrator import MediGeminiNeurosymbolicOrchestrator
+        ehr_txt = pathlib.Path(args.ehr_file).read_text(encoding="utf-8") if args.ehr_file and pathlib.Path(args.ehr_file).exists() else None
+        orch_out = MediGeminiNeurosymbolicOrchestrator(db_path=DB_PATH).orchestrate(
+            case_text=args.case,
+            ehr_timeline=ehr_txt,
+            image_path=args.image,
+            modality_hint=args.modality,
+            live_ugs=args.live_ugs,
+        )
+        if args.fhir:
+            print(json.dumps(orch_out["med_gemini_capabilities"]["2_long_context_ehr_and_fhir"]["fhir_r4_bundle"], ensure_ascii=False, indent=2))
+        elif args.json:
+            print(json.dumps({k: v for k, v in orch_out.items() if k != "markdown_report"}, ensure_ascii=False, indent=2))
+        else:
+            print(orch_out["markdown_report"])
         return
 
     if args.mode == "loop":

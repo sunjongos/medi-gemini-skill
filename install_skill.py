@@ -30,7 +30,7 @@ ROOT_FILES = [
     "NDB_Medi_Gemini_Medical_Ontology_Master.html",
 ]
 
-SUBDIRS = ["scripts", "references", "tests", "dashboards"]
+SUBDIRS = ["scripts", "wiki", "references", "tests", "dashboards"]
 
 
 def install(target_skill_dir: Path) -> None:
