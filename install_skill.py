@@ -24,13 +24,14 @@ ROOT_FILES = [
     "requirements.txt",
     "ndb_medi_gemini_agent.py",
     "medi_gemini_knowledge.db",
+    "🩺_MediGemini_다학제협진_실행.bat",
     "NDB_Medi_Gemini_Clinical_Assist_Console.html",
     "Choi_3x3_Pain_Matrix_Interactive_Dashboard.html",
     "NDB_Medi_Gemini_Medical_AI_Console.html",
     "NDB_Medi_Gemini_Medical_Ontology_Master.html",
 ]
 
-SUBDIRS = ["scripts", "wiki", "references", "tests", "dashboards"]
+SUBDIRS = ["app", "scripts", "wiki", "references", "tests", "dashboards"]
 
 
 def install(target_skill_dir: Path) -> None:

@@ -93,6 +93,27 @@ class TestMediGeminiAssistLoop(unittest.TestCase):
         self.assertIn("Allopurinol", no_joined)
         self.assertIn("NSAIDs", no_joined)
 
+    def test_multidisciplinary_2026_consult_board_and_local_app(self) -> None:
+        # 1. Diabetes (SGLT2i + GLP-1) + Prolia rebound before spine surgery
+        case1 = (
+            "68세 여성, L4-5 척추관 협착증 BESS 수술 예정. 자디앙(SGLT2i)과 마운자로(GLP-1) 투여 중, "
+            "골다공증 프롤리아(데노수맙) 중단 고민."
+        )
+        out1 = self.orchestrator.orchestrate(case1)
+        deltas1 = {d["delta_id"] for d in out1["med_gemini_capabilities"]["5_multidisciplinary_2026_consult_board"]}
+        self.assertIn("MD_ENDO_01_SGLT2I_PEROP", deltas1)
+        self.assertIn("MD_ENDO_02_GLP1_PEROP_SARCOPENIA", deltas1)
+        self.assertIn("MD_ENDO_03_PROLIA_REBOUND_ANABOLIC", deltas1)
+
+        # 2. Diabetic Charcot foot & Knee MMPRT detection
+        out2 = self.orchestrator.orchestrate("61세 당뇨 남성, 발등 부종과 발목 발적, 통증 적음. 샤르코 감별.")
+        deltas2 = {d["delta_id"] for d in out2["med_gemini_capabilities"]["5_multidisciplinary_2026_consult_board"]}
+        self.assertIn("MD_ORTHO_02_ANKLE_CHARCOT_VS_CELLULITIS", deltas2)
+
+        out3 = self.orchestrator.orchestrate("57세 여성, 쪼그려 앉다 무릎 뒤 안쪽 '뚝' 소리 후 급성 통증. 반월상연골 의심.")
+        deltas3 = {d["delta_id"] for d in out3["med_gemini_capabilities"]["5_multidisciplinary_2026_consult_board"]}
+        self.assertIn("MD_ORTHO_01_KNEE_MMPRT", deltas3)
+
 
 if __name__ == "__main__":
     unittest.main()

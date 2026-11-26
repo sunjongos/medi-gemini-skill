@@ -54,6 +54,7 @@ def ensure_v6_tables(db_path: Path = DB_PATH) -> None:
         "deep_twin_tacit_rules",
         "pharmacogenomics_pgx_rules",
         "multimodal_vision_3d_schemas",
+        "multidisciplinary_guideline_deltas",
     }
     if not required.issubset(tables):
         from build_medi_gemini_db import build_database
@@ -390,6 +391,76 @@ class MedGeminiCapabilitiesSuite:
                 )
         return alerts
 
+    # 5.5. University-Hospital Multidisciplinary Consult Board (2025-2026 Guideline Deltas)
+    def consult_multidisciplinary_board(self, full_text: str) -> List[Dict[str, str]]:
+        tl = full_text.lower()
+        conn = self._connect()
+        rows = conn.execute("SELECT * FROM multidisciplinary_guideline_deltas").fetchall()
+        conn.close()
+
+        consults: List[Dict[str, str]] = []
+        for r in rows:
+            cues = json.loads(r["trigger_cues_json"])
+            matched = [c for c in cues if c.lower() in tl]
+            if matched:
+                consults.append(
+                    {
+                        "delta_id": r["delta_id"],
+                        "specialty": r["specialty"],
+                        "topic": r["topic"],
+                        "matched_cues": ", ".join(matched[:4]),
+                        "old_practice": r["old_practice"],
+                        "latest_2026_standard": r["latest_2026_standard"],
+                        "spine_ortho_interaction": r["spine_ortho_interaction"],
+                        "source_ref": r["source_ref"],
+                    }
+                )
+        return consults
+
+    # 5.6. Self-Evolution Learning Hook: Persists new clinician-verified guideline deltas into SQLite + LLM-Wiki
+    def learn_new_guideline_delta(
+        self,
+        specialty: str,
+        topic: str,
+        trigger_cues: List[str],
+        old_practice: str,
+        latest_2026_standard: str,
+        spine_ortho_interaction: str,
+        source_ref: str = "Clinician Verified Self-Evolution",
+    ) -> Dict[str, Any]:
+        delta_id = f"MD_EVOLVED_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        conn = self._connect()
+        conn.execute(
+            """INSERT OR REPLACE INTO multidisciplinary_guideline_deltas (
+                delta_id, specialty, topic, trigger_cues_json,
+                old_practice, latest_2026_standard, spine_ortho_interaction, source_ref, user_evolved
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1);""",
+            (
+                delta_id,
+                specialty,
+                topic,
+                json.dumps(trigger_cues, ensure_ascii=False),
+                old_practice,
+                latest_2026_standard,
+                spine_ortho_interaction,
+                source_ref,
+            ),
+        )
+        conn.commit()
+        conn.close()
+
+        # Also append to LLM-Wiki MOC for permanent bidirectional knowledge graph persistence
+        wiki_moc = SKILL_DIR / "wiki" / "MOC_Medi_Gemini_Ontology.md"
+        if wiki_moc.exists():
+            entry = (
+                f"\n- `[[{delta_id}]]` (**{specialty}** — {topic}): "
+                f"❌ {old_practice} ➔ ✅ {latest_2026_standard} (*{source_ref}*)\n"
+            )
+            with wiki_moc.open("a", encoding="utf-8") as f:
+                f.write(entry)
+
+        return {"status": "learned", "delta_id": delta_id, "specialty": specialty, "topic": topic}
+
     # 6. Clinical Deep Twin: Charlie Munger 3-Basket + Tacit Rules + Cognitive Bias Shield + NDB Value Index
     def evaluate_deep_twin(
         self,
@@ -524,6 +595,13 @@ class MediGeminiNeurosymbolicOrchestrator:
             image_path=image_path,
             modality_hint=modality_hint,
         )
+        md_consults = self.capabilities.consult_multidisciplinary_board(combined_text)
+        if md_consults:
+            for mc in md_consults:
+                interaction_warn = f"🏥 [다학제 최신협진 {mc['specialty']}] {mc['topic']} ➔ {mc['latest_2026_standard']}"
+                if "중단" in mc["latest_2026_standard"] or "금지" in mc["latest_2026_standard"] or "Triple Whammy" in mc["latest_2026_standard"]:
+                    if interaction_warn not in draft["negative_gate_m0"]:
+                        draft["negative_gate_m0"].append(interaction_warn)
 
         # Step 4: Clinical Deep Twin (Munger 3-Basket, Tacit Rules, Cognitive Bias Shield, NDB Value Index)
         deep_twin = self.capabilities.evaluate_deep_twin(
@@ -538,7 +616,7 @@ class MediGeminiNeurosymbolicOrchestrator:
         )
 
         payload = {
-            "architecture": "Medi-Gemini v6.0 (JEV Router × Deep Twin × Neurosymbolic Ontology)",
+            "architecture": "Medi-Gemini v7.0 (1-Doctor University-Hospital Multidisciplinary Board × JEV × Deep Twin × Ontology)",
             "jev_router": jev_route,
             "deep_twin": deep_twin,
             "med_gemini_capabilities": {
@@ -546,6 +624,7 @@ class MediGeminiNeurosymbolicOrchestrator:
                 "2_long_context_ehr_and_fhir": long_ehr,
                 "3_multimodal_2d_3d_vision": vision_3d,
                 "4_pharmacogenomics_pgx": pgx_alerts,
+                "5_multidisciplinary_2026_consult_board": md_consults,
             },
             "closed_loop_assist": {k: v for k, v in core.items() if k != "markdown_report"},
         }
@@ -592,6 +671,15 @@ class MediGeminiNeurosymbolicOrchestrator:
         )
         for sf in vis["extracted_symbolic_findings"]:
             header.append(f"  - {sf}")
+        md_board = caps.get("5_multidisciplinary_2026_consult_board", [])
+        if md_board:
+            header.append("")
+            header.append("## 🏥 [Layer C] 1인 대학병원 다학제 협진 패널 (옛 관행 vs 2025~2026 최신 표준 Delta)")
+            for mc in md_board:
+                header.append(f"### 🩺 [{mc['specialty']}] {mc['topic']} *(근거: {mc['source_ref']})*")
+                header.append(f"- ❌ **예전 관행/함정**: {mc['old_practice']}")
+                header.append(f"- ✅ **2025~2026 최신 표준**: {mc['latest_2026_standard']}")
+                header.append(f"- 🔗 **척추/정형외과 교차 의사결정**: {mc['spine_ortho_interaction']}")
         header.append("")
         header.append("---")
         header.append("")

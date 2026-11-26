@@ -268,6 +268,70 @@ MULTIMODAL_SCHEMAS = [
 ]
 
 
+MULTIDISCIPLINARY_DELTAS = [
+    {
+        "delta_id": "MD_ENDO_01_SGLT2I_PEROP",
+        "specialty": "내분비내과 (당뇨·대사)",
+        "topic": "SGLT2 억제제(자디앙·포시가 등) 수술 전 정상혈당 케톤산증(Euglycemic DKA) 예방",
+        "trigger_cues": ["sglt2", "자디앙", "포시가", "엠파글리플로진", "다파글리플로진", "empagliflozin", "dapagliflozin", "수술 전 당뇨약", "당뇨 수술"],
+        "old_practice": "혈당이 정상이면 당뇨약은 수술 당일 아침만 거르고 진행해도 안전하다.",
+        "latest_2026_standard": "ADA/FDA 2025-2026 표준: Empagliflozin·Dapagliflozin은 수술 최소 **3일 전**(Ertugliflozin은 **4일 전**) 반드시 중단! 혈당이 정상(150~200)이어도 금식·수술 스트레스 시 치명적 정상혈당 케톤산증(Euglycemic DKA) 발생 가능.",
+        "spine_ortho_interaction": "척추 BESS/유합술·관절 수술 전 복약력 확인 필수; 수술 후 오심·복통·빈호흡 시 혈당이 정상이더라도 즉시 혈중 케톤/혈액가스(ABGA) 확인!",
+        "source_ref": "ADA Standards of Care 2025-2026 / FDA Safety Update",
+    },
+    {
+        "delta_id": "MD_ENDO_02_GLP1_PEROP_SARCOPENIA",
+        "specialty": "내분비내과 × 관절/마취과",
+        "topic": "GLP-1 / GIP 비만·당뇨 주사(위고비·마운자로) 수술 전 흡인 위험 & 근감소성 무릎 부하",
+        "trigger_cues": ["glp-1", "마운자로", "위고비", "오젬픽", "삭센다", "세마글루타이드", "티르제파타이드", "mounjaro", "wegovy", "semaglutide", "tirzepatide"],
+        "old_practice": "수술 전 8시간 금식만 지키면 위가 비워져 마취 중 흡인 위험이 없다 / 체중만 빠지면 무조건 무릎에 좋다.",
+        "latest_2026_standard": "ASA/Multi-Society 2025-2026 컨센서스: GLP-1/GIP는 위 배출을 강하게 지연시키므로 용량 증량기·소화기 증상자에서 수술/진정 전 **24시간 맑은 유동식(Clear Liquid)** 또는 주 1회 제제 휴약·위 초음파 평가 필요! 또한 급격 감량 시 제지방(대퇴사두근) 25~40% 소실 동반.",
+        "spine_ortho_interaction": "수면마취 시술(PEN/신경차단술)·전신마취 척추수술 전 마취과 사전 공유 필수; 무릎 통증 환자는 단백질 보충 + 굴곡 30~45도 Safety Zone 대퇴사두근 근력 보호 병행.",
+        "source_ref": "ASA/AGA/TOS Multi-Society Guidance 2025-2026",
+    },
+    {
+        "delta_id": "MD_ENDO_03_PROLIA_REBOUND_ANABOLIC",
+        "specialty": "내분비내과 × 척추외과 (골다공증)",
+        "topic": "데노수맙(프롤리아) 임의 중단 다발성 척추골절 반동(Rebound) & 수술 전 골형성제(Anabolic-First)",
+        "trigger_cues": ["프롤리아", "데노수맙", "prolia", "denosumab", "이베니티", "로모소주맙", "포스테오", "테리파라타이드", "골다공증", "압박골절", "척추 유합"],
+        "old_practice": "치과 치료나 환자 편의로 프롤리아 주사를 몇 달 미루거나 끊어도 괜찮다 / 골다공증은 무조건 비스포스포네이트부터 쓴다.",
+        "latest_2026_standard": "Endocrine Society / AACE 2025-2026: ① **프롤리아(Denosumab) 6개월 간격 초과 지연/임의 중단 절대 금지** — 파골세포 폭주로 수개월 내 다발성 척추압박골절(Rebound fracture) 유발! 중단 시 반드시 Zoledronate 등 비스포스포네이트 브릿징 필수. ② 초고위험군(T <= -2.5 + 골절력, 또는 척추 기기고정 예정)은 **골형성촉진제(Romosozumab/Teriparatide) 선행(Anabolic-First)**이 표준.",
+        "spine_ortho_interaction": "척추 수술 전 CT Hounsfield Unit(HU < 110) 평가 및 골형성제 선행 최적화로 나사못 해리(Screw loosening)·불유합 예방.",
+        "source_ref": "AACE / ASBMR / Endocrine Society 2025-2026",
+    },
+    {
+        "delta_id": "MD_ORTHO_01_KNEE_MMPRT",
+        "specialty": "정형외과 (무릎 관절)",
+        "topic": "중장년 내측 반월상연골 후각 기시부 파열(MMPRT) 조기 봉합 원칙",
+        "trigger_cues": ["무릎 뒤", "무릎 안쪽 뚝", "뚝 소리", "기시부 파열", "root tear", "반월상연골", "계단 내려갈 때 무릎", "쪼그려 앉다 무릎"],
+        "old_practice": "50~60대 퇴행성 반월상연골 파열은 주사 맞으며 버티거나 찢어진 부위를 잘라내는 부분절제술(Meniscectomy)을 한다.",
+        "latest_2026_standard": "JBJS / AAOS 2025-2026: 쪼그려 앉기·계단 하행 중 무릎 후내측에서 **'뚝(Pop)'** 소리 후 급성 통증이 온 **내측 반월상연골 후각 기시부 파열(MMPRT)**은 기능적으로 연골판 전절제와 동일해 방치/부분절제 시 1~2년 내 급속 말기 관절염으로 진행! 정렬(O다리 <5도) 및 연골(K-L <=2) 보존 시 **조기 경골 터널 기시부 봉합술(Pull-out Repair)**이 표준.",
+        "spine_ortho_interaction": "요추 L3-4 신경근병증 연관 무릎 통증과 감별 후, 후내측 국소 압통 + '뚝' 병력 시 조기 3.0T 무릎 MRI로 Root Tear 및 Extrusion 확인.",
+        "source_ref": "JBJS / Arthroscopy 2025-2026 Consensus",
+    },
+    {
+        "delta_id": "MD_ORTHO_02_ANKLE_CHARCOT_VS_CELLULITIS",
+        "specialty": "정형외과 (족부·발목) × 내분비내과",
+        "topic": "당뇨병 환자의 급성 발적·부종 발 — 봉와직염으로 오진하기 쉬운 급성 샤르코 관절(Charcot Foot) & 발목 인대",
+        "trigger_cues": ["발목", "발이 붓", "발등 부종", "당뇨발", "샤르코", "charcot", "발목 삔", "발목 염좌", "경비인대", "아킬레스"],
+        "old_practice": "당뇨 환자 발이 붉고 뜨겁게 부었으면 일단 봉와직염으로 항생제만 주고 걷게 한다 / 발목 염좌는 깁스만 오래 한다.",
+        "latest_2026_standard": "IWGDF / AOFAS 2025-2026: ① 말초신경병증 당뇨 환자의 **통증은 적은데 붉고 뜨겁고 부은 발(반대발 대비 피부온도 >=2℃ 상승)**은 **급성 샤르코 신경병성 관절증** 최우선 감별! 즉시 **비체중부하(Offloading / Total Contact Cast)** 및 체중부하 X-ray·MRI 시행(항생제만 주고 걷게 하면 족부 붕괴!). ② 단순 발목 염좌는 조기 기능적 재활이 표준이나, 발목 위 경비인대(Syndesmosis) 압통·6주 불응 시 관절경 Broström/안정화 평가.",
+        "spine_ortho_interaction": "요추 신경병증 감각저하가 있는 당뇨 환자에서 발목/발 부종 호소 시 반드시 양발 온도 비교 및 족부 변형 확인.",
+        "source_ref": "IWGDF 2024-2026 Charcot Guideline / AOFAS",
+    },
+    {
+        "delta_id": "MD_CARDIO_NEPHRO_01_TRIPLE_WHAMMY_KDIGO",
+        "specialty": "신장·순환기내과",
+        "topic": "KDIGO 2025-2026 CKD 4대 기둥 치료 & Triple Whammy(ACEi/ARB + 이뇨제 + NSAID) 급성신손상 차단",
+        "trigger_cues": ["혈압약", "이뇨제", "arb", "acei", "로사르탄", "발사르탄", "올메사르탄", "푸로세미드", "라식스", "신기능", "egfr", "ckd", "단백뇨"],
+        "old_practice": "고혈압·당뇨 환자가 허리/관절이 아프면 흔히 소염진통제(NSAIDs)를 단기간 처방해도 큰 문제 없다.",
+        "latest_2026_standard": "KDIGO 2024-2026: **ACEi/ARB + 이뇨제 + 전신 NSAIDs** 3제 조합(**Triple Whammy**)은 사구체 수출/수입세동맥을 동시 교란시켜 급성 신손상(AKI) 위험을 2~3배 폭증! 또한 CKD 보호 표준은 `RASi + SGLT2i + Finerenone + GLP-1` 4대 기둥이며, 통증 조절은 Acetaminophen·국소 패치·신기능 보정 신경병성 약제가 원칙.",
+        "spine_ortho_interaction": "외래 진통제 처방 전 환자의 고혈압약(ARB/이뇨제 복합제) 복용 여부 확인 필수 -> Triple Whammy 감지 시 NSAIDs 대신 비신독성 진통제로 전환.",
+        "source_ref": "KDIGO 2024-2026 CKD Clinical Practice Guideline",
+    },
+]
+
+
 RED_FLAGS = [
     {
         "code": "RF01_CES",
@@ -1233,6 +1297,40 @@ def build_database(db_path: Path = DB_PATH) -> dict:
             ),
         )
 
+    # 11. Multidisciplinary 2025-2026 Guideline Deltas (Old Practice vs Latest Standard)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS multidisciplinary_guideline_deltas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            delta_id TEXT UNIQUE NOT NULL,
+            specialty TEXT NOT NULL,
+            topic TEXT NOT NULL,
+            trigger_cues_json TEXT NOT NULL,
+            old_practice TEXT NOT NULL,
+            latest_2026_standard TEXT NOT NULL,
+            spine_ortho_interaction TEXT NOT NULL,
+            source_ref TEXT NOT NULL,
+            user_evolved INTEGER DEFAULT 0
+        );
+    """)
+    cur.execute("DELETE FROM multidisciplinary_guideline_deltas WHERE user_evolved = 0;")
+    for md in MULTIDISCIPLINARY_DELTAS:
+        cur.execute(
+            """INSERT OR REPLACE INTO multidisciplinary_guideline_deltas (
+                delta_id, specialty, topic, trigger_cues_json,
+                old_practice, latest_2026_standard, spine_ortho_interaction, source_ref, user_evolved
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0);""",
+            (
+                md["delta_id"],
+                md["specialty"],
+                md["topic"],
+                json.dumps(md["trigger_cues"], ensure_ascii=False),
+                md["old_practice"],
+                md["latest_2026_standard"],
+                md["spine_ortho_interaction"],
+                md["source_ref"],
+            ),
+        )
+
     conn.commit()
     stats = {
         "db_path": str(db_path),
@@ -1245,6 +1343,7 @@ def build_database(db_path: Path = DB_PATH) -> dict:
         "deep_twin_tacit_rules": cur.execute("SELECT COUNT(*) FROM deep_twin_tacit_rules").fetchone()[0],
         "pharmacogenomics_pgx_rules": cur.execute("SELECT COUNT(*) FROM pharmacogenomics_pgx_rules").fetchone()[0],
         "multimodal_vision_3d_schemas": cur.execute("SELECT COUNT(*) FROM multimodal_vision_3d_schemas").fetchone()[0],
+        "multidisciplinary_guideline_deltas": cur.execute("SELECT COUNT(*) FROM multidisciplinary_guideline_deltas").fetchone()[0],
     }
     conn.close()
     return stats
